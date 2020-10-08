@@ -68,6 +68,13 @@ namespace ContactManagement.Web.Controllers
         {
             try
             {
+                var existingContact = await _contactRepo.FirstOrDefault(c =>
+                                        c.FirstName == contactRequest.FirstName 
+                                        && c.LastName == contactRequest.LastName, token).ConfigureAwait(false);
+
+                if(existingContact != null)
+                    return StatusCode((int)HttpStatusCode.Found);
+
                 var contact = _mapper.Map<Contact>(contactRequest);
                 contact.CreatedDate = DateTime.Now;
                 contact.ModifiedDate = DateTime.Now;
