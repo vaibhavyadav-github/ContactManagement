@@ -31,7 +31,13 @@ namespace ContactManagement.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// Update email id of existing contact by exisiting record id
+        /// </summary>
+        /// <param name="contactDetailId"></param>
+        /// <param name="email"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpPut("{contactDetailId}/Email")]
         public async Task<IActionResult> UpdateEmail([FromRoute] int contactDetailId, [FromBody] string email, CancellationToken token)
         {

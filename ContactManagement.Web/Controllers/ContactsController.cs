@@ -31,7 +31,12 @@ namespace ContactManagement.Web.Controllers
             _contactRepo = contactRepo;
         }
         
-
+        /// <summary>
+        /// Get Contacts by City name
+        /// </summary>
+        /// <param name="city"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpGet("{city}")]
         public async Task<IActionResult> Get([FromRoute] string city, CancellationToken token)
         {
@@ -52,6 +57,12 @@ namespace ContactManagement.Web.Controllers
 
         }
 
+        /// <summary>
+        /// Create new contact with address
+        /// </summary>
+        /// <param name="contactRequest"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ContactRequest contactRequest, CancellationToken token)
         {
@@ -72,6 +83,12 @@ namespace ContactManagement.Web.Controllers
 
         }
 
+        /// <summary>
+        /// Delete Cotact by id
+        /// </summary>
+        /// <param name="contactId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpDelete("{contactId}")]
         public async Task<IActionResult> Delete([FromRoute] int contactId, CancellationToken token)
         {
@@ -95,7 +112,13 @@ namespace ContactManagement.Web.Controllers
 
         }
 
-
+        /// <summary>
+        /// Add phone number to existing contact
+        /// </summary>
+        /// <param name="contactId"></param>
+        /// <param name="contactDetailRequest"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpPut("{contactId}/Phone")]
         public async Task<IActionResult> AddPhone([FromRoute] int contactId, [FromBody] ContactDetailRequest contactDetailRequest, CancellationToken token)
         {
@@ -125,55 +148,32 @@ namespace ContactManagement.Web.Controllers
         }
 
 
+        /// <summary>
+        /// Display all contacts
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll(CancellationToken token)
+        {
+            try
+            {
+                var result = await _contactRepo.FindByExpression(token,
+                    include => include.Address,
+                    include => include.ContactDetails
+                ).ConfigureAwait(false);
 
+                if (result == null)
+                    return StatusCode((int)HttpStatusCode.NotFound);
 
-        //[HttpPut("{contactId}")]
-        //public async Task<IActionResult> Put([FromRoute] int contactId, [FromBody] ContactRequest contactRequest, CancellationToken token)
-        //{
-        //    try
-        //    {
-        //        var existingContact = await _contactRepo.FirstOrDefault(c => c.UniqueId == contactId, token).ConfigureAwait(false);
+                return StatusCode((int)HttpStatusCode.OK, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
 
-        //        // If doesn't exists
-        //        if (existingContact == null)
-        //            return StatusCode((int)HttpStatusCode.NotFound);
-
-        //        existingContact.FirstName = contactRequest.FirstName;
-
-        //        existingContact.ModifiedDate = DateTime.Now;
-
-        //        await _contactRepo.Update(existingContact, token).ConfigureAwait(false);
-
-        //        return StatusCode((int)HttpStatusCode.OK);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //       return StatusCode((int)HttpStatusCode.InternalServerError, ex);
-        //    }            
-
-        //}
-
-        //[HttpGet("all")]
-        //public async Task<IActionResult> GetAll(CancellationToken token)
-        //{
-        //    try
-        //    {
-        //        var result = await _contactRepo.FindByExpression(token,
-        //            include => include.Address,
-        //            include => include.ContactDetails
-        //        ).ConfigureAwait(false);
-
-        //        if (result == null)
-        //            return StatusCode((int)HttpStatusCode.NotFound);
-
-        //        return StatusCode((int)HttpStatusCode.OK, result);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        return StatusCode((int)HttpStatusCode.InternalServerError, ex);
-        //    }           
-
-        //}
+        }
 
 
     }
