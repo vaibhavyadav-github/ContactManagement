@@ -19,6 +19,9 @@ namespace ContactManagement.Data.Abstraction
         Task Delete(T entity, CancellationToken token);
 
         Task<List<T>> FindByExpression(Expression<Func<T, bool>> predicate, CancellationToken token);
+
+        Task<List<T>> FindByExpression(Expression<Func<T, bool>> predicate, CancellationToken token, params Expression<Func<T, object>>[] includeProperties);
+
         Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate, CancellationToken token);
 
         Task<T> FirstOrDefault(CancellationToken token, Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties);

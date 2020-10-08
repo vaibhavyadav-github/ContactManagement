@@ -67,6 +67,24 @@ namespace ContactManagement.Data
             return await entities.Where(predicate).ToListAsync(token).ConfigureAwait(false);
         }
 
+        public async Task<List<T>> FindByExpression(Expression<Func<T, bool>> predicate, CancellationToken token, params Expression<Func<T, object>>[] includeProperties)
+        {
+            var query = entities.Where(predicate).AsQueryable();
+
+            includeProperties.ToList().ForEach(
+                navitable => {
+                    if (navitable != null)
+                    {
+                        query = includeProperties.Aggregate(query,
+                                                            (current, expression) => current.Include(navitable));
+
+                    }
+                });
+
+            return await query.ToListAsync(token).ConfigureAwait(false);
+
+        }
+
         public async Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate, CancellationToken token)
         {
             return await entities.FirstOrDefaultAsync(predicate,token).ConfigureAwait(false);

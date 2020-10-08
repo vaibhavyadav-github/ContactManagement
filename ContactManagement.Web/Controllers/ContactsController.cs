@@ -42,11 +42,10 @@ namespace ContactManagement.Web.Controllers
         {
             try
             {
-                var result = await _contactRepo.FindByExpression(c =>
-                                        c.Address.City == city ,token).ConfigureAwait(false);
-
-                if (result == null)
-                    return StatusCode((int)HttpStatusCode.Gone);
+                var result = await _contactRepo.FindByExpression(c => c.Address.City == city, token,
+                    include => include.Address,
+                    include => include.ContactDetails
+                ).ConfigureAwait(false);
 
                 return StatusCode((int)HttpStatusCode.OK, result);
             }
